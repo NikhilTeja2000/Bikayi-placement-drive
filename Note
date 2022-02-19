@@ -1,0 +1,117 @@
+#After Getting the json file i changed it into CSV
+#Later i removed all the extra fields which are present in the CSV
+#ANd converted into JSON
+#ANd again converted it into hope20.csv
+
+#Code for removing the extra fields:
+
+
+import pandas as pd
+
+data= pd.read_csv("letsee.csv")
+#print(data.prizes)
+l=list(data.prizes)
+
+import json
+print(l[0])
+lrt=[]
+for a in l:
+    import re
+    p = re.compile('(?<!\\\\)\'')
+    a = p.sub('\"', a)
+    #print(a)
+    print("---------------start----------------")
+    gh=""
+    
+    while 'overallMotivation' in a:
+        rr=a.index('overallMotivation')
+        if "laureates" in a:
+            rrr=a.index('laureates')
+            a=a[:rr]+a[rrr:]
+        else:
+            a=a[:rr-3]+"}"
+    
+    while 'motivation' in a:
+        u=a.index("motivation")
+        i=a.index("share")
+        
+        gh=gh+a[:u]+a[i:i+13]
+        
+        
+        a=a[i+13:]
+    
+    #print("-------------end---------------------")    
+    #print(gh+a)
+    #print("111111111111")
+   # print(a,"---------")
+    
+    gh=gh+a
+    
+    if "2014" in gh:
+        if "John" in gh:
+            
+        
+            er=gh.index("surname")
+            i=gh.index("share")
+            gh=gh[:er]+gh[i:]
+    hg=""
+    while "surname" in gh:
+        u=gh.index("surname")
+        i=gh.index("share")
+        
+        hg=hg+gh[:u]+gh[i:i+13]
+        
+        
+        gh=gh[i+13:]
+    hg=hg+gh
+    
+    
+        
+        
+    
+    if "United Nations Children\"s Fund":
+        hg=hg.replace("United Nations Children\"s Fund","United Nations Childrens Fund")
+        print("ok")
+    
+    #print(hg)
+    d=json.loads(hg)
+    
+    #print(type(d))
+    #print(d)
+    y=d['year']
+    c=d['category']
+    idd,n,s=0,0,0
+    
+    if "laureates" in d:
+        
+        la=d['laureates']
+        
+        ui=[]
+        for b in la:
+            
+            pc=[y,c]
+            h=b
+            idd=h['id']
+            n=h['firstname']
+            s=h['share']
+            ins=[idd,n,s]
+            pc.extend(ins)
+            ui.append(pc)
+        muk=[]
+        for wd in ui:
+            dz={'year':wd[0],"category":wd[1],"id":wd[2],"name":wd[3],"share":wd[4]}
+            muk.append(dz)
+    else:
+        muk=[{'year':y,"category":c,"id":"NULL","name":"NULL","share":"NULL"}]
+    
+    lrt.extend(muk)
+print(lrt)
+json_object = json.dumps(lrt, indent = 4)
+
+
+# Writing to sample.json
+with open("20lpa.json", "w") as outfile:
+	outfile.write(json_object)
+
+    
+
