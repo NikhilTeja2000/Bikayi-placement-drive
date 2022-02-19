@@ -1,3 +1,4 @@
 open python compiler
 run file
+To run py file ,CSV also should be in same location
 And submit button according to your choice
